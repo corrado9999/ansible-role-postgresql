@@ -26,3 +26,23 @@
     group: "{{ postgresql_group }}"
     mode: 02775
   with_items: "{{ postgresql_unix_socket_directories }}"
+
+- name: Check listening port configuration mode
+  lineinfile:
+    path: /lib/systemd/system/postgresql.service
+    regexp: "^(.*\\$(PGPORT|{PGPORT}).*)$"
+    line: "\\1"
+    backrefs: yes
+  check_mode: yes #do not modify file, just check PGPORT variable is used
+
+- name: Configure listening port
+  blockinfile:
+    path: /etc/systemd/system/postgresql.service
+    block: |
+      .include /lib/systemd/system/postgresql.service
+      [Service]
+      Environment=PGPORT={{ item.value }}
+    create: yes
+  with_items: "{{ postgresql_global_config_options }}"
+  when: "{{ item.option == 'port' }}"
+  notify: restart postgresql
