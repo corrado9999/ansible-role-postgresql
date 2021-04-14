@@ -1,12 +1,38 @@
 ---
+- name: Gather the package facts
+  package_facts:
+    manager: auto
+
+- name: Check whether postgresql is installed
+  debug:
+    msg: "{{ ansible_facts.packages['postgresql'] | length }} versions of postgresql are installed!"
+  when: "'postgresql' in ansible_facts.packages"
+
+- name: Remove standard version of PostgreSQL related packages
+  package:
+    name: 
+      - postgresql
+      - postgresql-server
+      - postgresql-contrib
+      - postgresql-libs
+      - postgis
+      - pgbouncer
+    state: absent
+  when: "'postgresql' in ansible_facts.packages and not ansible_facts.packages['postgresql'][0].version.startswith(postgresql_version) "
+
+- name: install PostgreSQL repository
+  package:
+    name: "https://download.postgresql.org/pub/repos/yum/reporpms/EL-{{ ansible_distribution_major_version }}-{{ ansible_architecture }}/pgdg-redhat-repo-latest.noarch.rpm"
+
 - name: Ensure PostgreSQL packages are installed.
   package:
     name: "{{ postgresql_packages }}"
     state: present
     enablerepo: "{{ postgresql_enablerepo | default(omit, true) }}"
 
-- name: Ensure PostgreSQL Python libraries are installed.
-  package:
-    name: "{{ postgresql_python_library }}"
-    state: present
-    enablerepo: "{{ postgresql_enablerepo | default(omit, true) }}"
+- name: Create a symbolic link to postgres service file
+  ansible.builtin.file:
+    src: /lib/systemd/system/postgresql-{{postgresql_version}}.service
+    dest: /lib/systemd/system/postgresql.service
+    state: link
+  when: ansible_distribution_major_version|int > 6

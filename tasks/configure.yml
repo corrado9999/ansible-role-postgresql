@@ -34,6 +34,7 @@
     line: "\\1"
     backrefs: yes
   check_mode: yes #do not modify file, just check PGPORT variable is used
+  when: ansible_distribution_major_version|int > 6
 
 - name: Configure listening port
   blockinfile:
@@ -46,3 +47,4 @@
   with_items: "{{ postgresql_global_config_options }}"
   when: "{{ item.option == 'port' }}"
   notify: restart postgresql
+  when: ansible_distribution_major_version|int > 6
