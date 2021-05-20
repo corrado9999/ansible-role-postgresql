@@ -45,6 +45,5 @@
       Environment=PGPORT={{ item.value }}
     create: yes
   with_items: "{{ postgresql_global_config_options }}"
-  when: "{{ item.option == 'port' }}"
+  when: "ansible_distribution_major_version|int > 6 and item.option == 'port'"
   notify: restart postgresql
-  when: ansible_distribution_major_version|int > 6
