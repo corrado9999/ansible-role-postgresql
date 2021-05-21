@@ -1,13 +1,13 @@
 ---
 __postgresql_version: "{{postgresql_version | default('9.6') }}"
-__postgresql_version_deb: "{{__postgresql_version | replace('.','')}}"
+__postgresql_version_rh: "{{__postgresql_version | replace('.','')}}"
 __postgresql_data_dir: "/var/lib/pgsql/{{ __postgresql_version }}/data"
 __postgresql_bin_path: "/usr/pgsql-{{ __postgresql_version }}/bin"
 __postgresql_config_path: "/var/lib/pgsql/{{ __postgresql_version }}/data"
 __postgresql_daemon: postgresql-{{ __postgresql_version }}
 __postgresql_packages:
-  - "postgresql{{__postgresql_version_deb}}"
-  - "postgresql{{__postgresql_version_deb}}-server"
-  - "postgresql{{__postgresql_version_deb}}-contrib"
-  - "postgresql{{__postgresql_version_deb}}-libs"
+  - "postgresql{{__postgresql_version_rh}}"
+  - "postgresql{{__postgresql_version_rh}}-server"
+  - "postgresql{{__postgresql_version_rh}}-contrib"
+  - "postgresql{{__postgresql_version_rh}}-libs"
   - libselinux-python
