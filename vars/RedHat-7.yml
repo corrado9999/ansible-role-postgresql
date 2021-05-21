@@ -1,11 +1,13 @@
 ---
-__postgresql_version: "9.2"
-__postgresql_data_dir: "/var/lib/pgsql/data"
-__postgresql_bin_path: "/usr/bin"
-__postgresql_config_path: "/var/lib/pgsql/data"
+__postgresql_version: "{{postgresql_version | default('9.6') }}"
+__postgresql_version_rh: "{{__postgresql_version | replace('.','')}}"
+__postgresql_data_dir: "/var/lib/pgsql/{{ __postgresql_version }}/data"
+__postgresql_bin_path: "/usr/pgsql-{{ __postgresql_version }}/bin"
+__postgresql_config_path: "/var/lib/pgsql/{{ __postgresql_version }}/data"
 __postgresql_daemon: postgresql
 __postgresql_packages:
-  - postgresql
-  - postgresql-server
-  - postgresql-contrib
-  - postgresql-libs
+  - "postgresql{{__postgresql_version_rh}}"
+  - "postgresql{{__postgresql_version_rh}}-server"
+  - "postgresql{{__postgresql_version_rh}}-contrib"
+  - "postgresql{{__postgresql_version_rh}}-libs"
+
