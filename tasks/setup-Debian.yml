@@ -1,4 +1,28 @@
 ---
+- name: Install python apt package (global)
+  apt:
+    name: "python-apt" 
+    state: present
+
+- name: Gather the package facts
+  package_facts:
+    manager: auto
+
+- name: Check whether postgresql is installed (Debian)
+  debug:
+    msg: "{{ ansible_facts.packages['postgresql'] | length }} versions of postgresql are installed!"
+  when: "'postgresql' in ansible_facts.packages"
+
+- name: Remove standard version of PostgreSQL related packages (Debian)
+  apt:
+    name: 
+      - postgresql*
+      - postgis*
+      - pgbouncer
+    state: absent
+    autoremove: yes
+  when: "'postgresql' in ansible_facts.packages and not ansible_facts.packages['postgresql'][0].version.startswith(postgresql_version) "
+
 - name: Configure the PostgreSQL APT key (Debian)
   apt_key: 
     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc 

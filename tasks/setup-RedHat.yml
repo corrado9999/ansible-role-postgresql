@@ -6,12 +6,12 @@
       package_facts:
         manager: auto
 
-    - name: Check whether postgresql is installed
+    - name: Check whether postgresql is installed (RedHat)
       debug:
         msg: "{{ ansible_facts.packages['postgresql'] | length }} versions of postgresql are installed!"
       when: "'postgresql' in ansible_facts.packages"
 
-    - name: Remove standard version of PostgreSQL related packages
+    - name: Remove standard version of PostgreSQL related packages (RedHat)
       package:
         name: 
           - postgresql
